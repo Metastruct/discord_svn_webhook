@@ -98,9 +98,9 @@ avatar = tree[8].text  # magic number don't ask
 d = {
     'username': Author,
     'avatar_url': avatar,
+    'content': Log,
     'embeds': [
         {
-            'title': Log,
             'description': '```diff\n' + Diff + '```',
             'footer': {
                 'text': Repo + ' (rev. ' + _rev + ')',
