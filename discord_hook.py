@@ -6,7 +6,9 @@ import sys
 import datetime
 import requests
 
-with open('webhookurl.txt', 'r') as f:
+_path = path.join(sys.path[0], 'webhookurl.txt')
+
+with open(_path, 'r') as f:
     webhook_url = f.read()
 
 if not webhook_url:
