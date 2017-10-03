@@ -74,7 +74,7 @@ for line in _changed.split('\n'):
         U()
 
 Author = svnl('author')
-Diff = svnl('diff', args='--diff-copy-from')[:1990]
+Diff = svnl('diff', args='--diff-copy-from')[:1990] or svnl('changed', args='--copy-info')
 Repo = path.basename(_repos)
 Log = svnl('log')
 #File = 'http://svn://svn.metastruct.net/'+Repo+'/'+_changed.split('\n')[0].split(' ')[3]
