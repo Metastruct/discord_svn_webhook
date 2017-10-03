@@ -17,14 +17,10 @@ if not webhook_url:
 _repos = sys.argv[1]
 _rev = sys.argv[2]
 
-def svnl(method, **add):
+def svnl(method, *args):
     '''svnlook'''
-    if ('args' in add):
-        cmd = ('svnlook', method, _repos, add['args'], '--revision', _rev)
-    else:
-        cmd = ('svnlook', method, _repos, '--revision', _rev)
-    out = check_output(cmd).rstrip()
-    return out
+    args = list(args)
+    return check_output(['svnlook', method, _repos, '--revision', _rev] + args ).rstrip()
 
 def date_handler(obj): return (
     obj.isoformat()
@@ -62,7 +58,7 @@ def U():
     s = clamp(i, 0, 255)
     color[2] = s
 
-_changed = svnl('changed')
+_changed = svnl('changed', '--copy-info')
 
 # this is so bad
 for line in _changed.split('\n'):
@@ -74,7 +70,7 @@ for line in _changed.split('\n'):
         U()
 
 Author = svnl('author')
-Diff = svnl('diff', args='--diff-copy-from')[:1990] or svnl('changed', args='--copy-info')
+Diff = svnl('diff', '--no-diff-deleted', '--no-diff-added')[:1990]
 Repo = path.basename(_repos)
 Log = svnl('log')
 #File = 'http://svn://svn.metastruct.net/'+Repo+'/'+_changed.split('\n')[0].split(' ')[3]
@@ -103,7 +99,13 @@ d = {
     'content': Log,
     'embeds': [
         {
-            'description': '```diff\n' + Diff + '```',
+	    'fields': [
+		{
+			'name': 'Changed Files:',
+			'value': _changed,
+			'inline': True
+		}
+	    ],
             'footer': {
                 'text': Repo + ' (rev. ' + _rev + ')',
                 'icon_url': 'https://cdn.discordapp.com/avatars/314512567748001793/c5725b2d79c9081dae9d842ccb3d6dff.png'
@@ -113,6 +115,7 @@ d = {
         }
     ]
 }
-
+if Diff:
+    d['embeds'][0]['description'] = '```diff\n' + Diff + '```'
 headers = {'content-type': 'application/json'}
 requests.post(webhook_url, data=dumps(d, default=date_handler), headers=headers)
