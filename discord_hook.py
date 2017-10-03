@@ -73,7 +73,9 @@ Author = svnl('author')
 Diff = svnl('diff', '--no-diff-deleted', '--no-diff-added')[:1990]
 Repo = path.basename(_repos)
 Log = svnl('log')
-#File = 'http://svn://svn.metastruct.net/'+Repo+'/'+_changed.split('\n')[0].split(' ')[3]
+Urls = ''
+for f in _changed.split('\n'):
+    Urls += '['+f+'](svn://svn.metastruct.net/'+Repo+'/'+f.split(' ')[3] + ')\n'
 
 # steamid thing
 
@@ -102,7 +104,7 @@ d = {
 	    'fields': [
 		{
 			'name': 'Changed Files:',
-			'value': _changed,
+			'value': Urls,
 			'inline': True
 		}
 	    ],
