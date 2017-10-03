@@ -101,13 +101,8 @@ d = {
     'content': Log,
     'embeds': [
         {
-	    'fields': [
-		{
-			'name': 'Changed Files:',
-			'value': Urls,
-			'inline': True
-		}
-	    ],
+            'fields': [
+            ],
             'footer': {
                 'text': Repo + ' (rev. ' + _rev + ')',
                 'icon_url': 'https://cdn.discordapp.com/avatars/314512567748001793/c5725b2d79c9081dae9d842ccb3d6dff.png'
@@ -119,5 +114,12 @@ d = {
 }
 if Diff:
     d['embeds'][0]['description'] = '```diff\n' + Diff + '```'
+
+shit = [tuple(Urls.split('\n')[i:i+10]) for i in range(0, len(Urls), 10)]
+
+for x in shit:
+    if x: # because shit can be empty
+        d['embeds'][0]['fields'].append({'name': '---', 'value': '\n'.join(map(str, x))})
+
 headers = {'content-type': 'application/json'}
 requests.post(webhook_url, data=dumps(d, default=date_handler), headers=headers)
