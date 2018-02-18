@@ -8,10 +8,9 @@ import requests
 
 _path = path.join(sys.path[0], 'webhookurl.txt')
 
-with open(_path, 'r') as f:
-    webhook_url = f.read()
+webhook_urls = [line.rstrip('\n') for line in open(_path)]
 
-if not webhook_url:
+if not webhook_urls:
     quit()
 
 _repos = sys.argv[1]
@@ -122,4 +121,5 @@ for x in shit:
         d['embeds'][0]['fields'].append({'name': '---', 'value': '\n'.join(map(str, x))})
 
 headers = {'content-type': 'application/json'}
-requests.post(webhook_url, data=dumps(d, default=date_handler), headers=headers)
+for webhook in webhook_urls:
+    requests.post(webhook, data=dumps(d, default=date_handler), headers=headers)
