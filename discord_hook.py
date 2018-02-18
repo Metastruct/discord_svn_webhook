@@ -1,10 +1,9 @@
 from json import dumps
 from subprocess import check_output
 from os import path
+
 import xml.etree.ElementTree as ElementTree
-import sys
-import datetime
-import requests
+import sys, requests, re, datetime
 
 _path = path.join(sys.path[0], 'webhookurl.txt')
 
@@ -69,6 +68,7 @@ for line in _changed.split('\n'):
         U()
 
 Author = svnl('author')
+Date = re.sub('(\s\(.+\))', '', svnl('date'))
 Diff = svnl('diff', '--no-diff-deleted', '--no-diff-added')[:1990]
 Repo = path.basename(_repos)
 Log = svnl('log')
@@ -106,7 +106,8 @@ d = {
                 'text': Repo + ' (rev. ' + _rev + ')',
                 'icon_url': 'https://cdn.discordapp.com/avatars/314512567748001793/c5725b2d79c9081dae9d842ccb3d6dff.png'
             },
-            'timestamp': datetime.datetime.now(),
+            #2010-02-15 20:10:20 +0000 (Mon, 15 Feb 2010)
+            'timestamp': datetime.datetime.strptime(Date, '%Y-%m-%d %H:%M:%S +0000'),
             'color': rgb_to_int(color[0], color[1], color[2])
         }
     ]
