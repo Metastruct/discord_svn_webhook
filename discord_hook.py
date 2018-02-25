@@ -38,7 +38,7 @@ def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
 
 color = [79, 84, 92]
-modifier = 50
+modifier = 75
 
 # how 2 python
 
