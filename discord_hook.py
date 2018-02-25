@@ -1,10 +1,11 @@
 from json import dumps
 from subprocess import check_output
+from os import path
 
 import xml.etree.ElementTree as ElementTree
-import os, sys, requests, re, datetime
+import sys, requests, re, datetime
 
-_path = os.path.join(os.getcwd(), 'webhookurl.txt')
+_path = path.join(sys.path[0], 'webhookurl.txt')
 
 webhook_urls = [line.rstrip('\n') for line in open(_path)]
 
@@ -69,7 +70,7 @@ for line in _changed.split('\n'):
 Author = svnl('author')
 Date = re.sub('(\s\(.+\))', '', svnl('date'))
 Diff = svnl('diff', '--no-diff-deleted', '--no-diff-added')[:1990]
-Repo = os.path.basename(_repos)
+Repo = path.basename(_repos)
 Log = svnl('log')
 Urls = ''
 for f in _changed.split('\n'):
