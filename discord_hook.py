@@ -37,7 +37,7 @@ def rgb_to_int(red, green, blue):
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
 
-color = [25, 25, 25]
+color = [50, 50, 50]
 modifier = 75
 
 # how 2 python
