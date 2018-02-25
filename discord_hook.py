@@ -1,6 +1,7 @@
 from json import dumps
 from subprocess import check_output
 from os import path
+from dateutil import parser
 
 import xml.etree.ElementTree as ElementTree
 import sys, requests, re, datetime
@@ -107,7 +108,7 @@ d = {
                 'icon_url': 'https://cdn.discordapp.com/avatars/314512567748001793/c5725b2d79c9081dae9d842ccb3d6dff.png'
             },
             #2010-02-15 20:10:20 +0000 (Mon, 15 Feb 2010)
-            'timestamp': datetime.datetime.strptime(Date, '%Y-%m-%d %H:%M:%S +0000'),
+            'timestamp': parser.parse(Date),
             'color': rgb_to_int(color[0], color[1], color[2])
         }
     ]
