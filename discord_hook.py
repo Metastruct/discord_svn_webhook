@@ -74,7 +74,7 @@ Repo = path.basename(_repos)
 Log = svnl('log')
 Urls = ''
 for f in _changed.split('\n'):
-    Urls += '['+f+'](svn://svn.metastruct.net/'+Repo+'/'+f.split(' ')[3] + ')\n'
+    Urls += f + '\n'
 
 # steamid thing
 
@@ -115,7 +115,7 @@ d = {
 if Diff:
     d['embeds'][0]['description'] = '```diff\n' + Diff + '```'
 
-shit = [tuple(Urls.split('\n')[i:i+10]) for i in range(0, len(Urls), 10)]
+shit = [tuple(Urls.split('\n')[i:i+25]) for i in range(0, len(Urls), 25)]
 
 for x in shit:
     if x: # because shit can be empty
