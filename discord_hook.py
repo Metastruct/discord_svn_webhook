@@ -116,7 +116,7 @@ d = {
 if Diff:
     d['embeds'][0]['description'] = '```diff\n' + Diff + '```'
 
-shit = [tuple(Urls.split('\n')[i:i+25]) for i in range(0, len(Urls), 25)]
+shit = [tuple(Urls.split('\n')[i:i+10]) for i in range(0, len(Urls), 25)]
 
 for x in shit:
     if x: # because shit can be empty
