@@ -70,7 +70,7 @@ for line in _changed.split('\n'):
 
 Author = svnl('author')
 Date = re.sub('(\s\(.+\))', '', svnl('date'))
-Diff = svnl('diff', '--no-diff-deleted', '--no-diff-added', '-x -b')[:1990]
+Diff = svnl('diff', '--no-diff-deleted', '-x -b')[:1990]
 Repo = path.basename(_repos)
 Log = svnl('log')
 Urls = ''
