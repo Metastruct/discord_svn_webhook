@@ -4,22 +4,35 @@ from os import path
 from dateutil import parser
 
 import xml.etree.ElementTree as ElementTree
-import sys, requests, re, datetime
+import sys, requests, re, datetime, argparse
 
-_path = path.join(sys.path[0], 'webhookurl.txt')
+def parse_args():
+    parser = argparse.ArgumentParser(description='Executes a Discordwebhook')
+    parser.add_argument('repo', help='repository')
+    parser.add_argument('rev', help='svn revision')
+    parser.add_argument('webhookfile', help='webhookfile with a list of webhookurls')
+    parser.add_argument('-acls', '--accesslist', help='list containing steamid\'s')
 
-webhook_urls = [line.rstrip('\n') for line in open(_path)]
+    args = parser.parse_args()
 
-if not webhook_urls:
-    quit()
+    repo = args.repo
+    rev = args.rev
+    webhookfile = args.webhookfile
+    acls = args.accesslist
 
-_repos = sys.argv[1]
-_rev = sys.argv[2]
+    return repo, rev, webhookfile, acls
+
+_repos, _rev, _wf, _acls = parse_args()
+
+if not path.exists(_wf):
+    exit('Webhookfile does not exist.')
+
+webhook_urls = [line.rstrip('\n') for line in open(_wf)]
 
 def svnl(method, *args):
     '''svnlook'''
     args = list(args)
-    return check_output(['svnlook', method, _repos, '--revision', _rev] + args ).rstrip()
+    return check_output(['svnlook', method, path.abspath(_repos), '--revision', _rev] + args ).rstrip()
 
 def date_handler(obj): return (
     obj.isoformat()
@@ -69,35 +82,36 @@ for line in _changed.split('\n'):
         U()
 
 Author = svnl('author')
+avatar = None
 Date = re.sub('(\s\(.+\))', '', svnl('date'))
 Diff = svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style')[:1990]
-Repo = path.basename(_repos)
+Repo = path.basename(path.abspath(_repos))
 Log = svnl('log')
 Urls = ''
 for f in _changed.split('\n'):
     Urls += f + '\n'
 
 # steamid thing
+if _acls is not None and path.exists(_acls):
+    steam_id = ''
 
-steam_id = ''
-
-with open('/home/python/.svns/accesslist') as fp:
-    for line in fp:
-        if Author in line:
-            steam_id = line[:line.find(',')]
+    with open(path.abspath(_acls)) as fp:
+        for line in fp:
+            if Author in line:
+                steam_id = line[:line.find(',')]
 
 
-profile = 'https://steamcommunity.com/profiles/' + steam_id
+    profile = 'https://steamcommunity.com/profiles/' + steam_id
 
-# avatar or something
+    # avatar or something
 
-steam_data = requests.get(profile + '?xml=1').content
-tree = ElementTree.fromstring(steam_data)
-avatar = tree[8].text  # magic number don't ask
+    steam_data = requests.get(profile + '?xml=1').content
+    tree = ElementTree.fromstring(steam_data)
+    avatar = tree[8].text  # magic number don't ask
 
 d = {
     'username': Author,
-    'avatar_url': avatar,
+    'avatar_url': avatar if avatar else '',
     'content': Log,
     'embeds': [
         {
