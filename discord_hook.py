@@ -104,14 +104,16 @@ if _acls is not None and path.exists(_acls):
     profile = 'https://steamcommunity.com/profiles/' + steam_id
 
     # avatar or something
-
-    steam_data = requests.get(profile + '?xml=1').content
-    tree = ElementTree.fromstring(steam_data)
-    avatar = tree[8].text  # magic number don't ask
+    try:
+        steam_data = requests.get(profile + '?xml=1').content
+        tree = ElementTree.fromstring(steam_data)
+        avatar = tree[8].text  # magic number don't ask
+    except xml.ElementTree.ParserError:
+        pass
 
 d = {
     'username': Author,
-    'avatar_url': avatar if avatar else '',
+    'avatar_url': avatar if avatar else 'https://metastruct.net/static/DefaultSteamAvatar.png',
     'content': Log,
     'embeds': [
         {
