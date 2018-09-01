@@ -84,7 +84,8 @@ for line in _changed.split('\n'):
 Author = svnl('author')
 avatar = None
 Date = re.sub('(\s\(.+\))', '', svnl('date'))
-Diff = svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style')[:1990]
+_len = len(svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style'))
+Diff = svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style')[:1990] + "\n. . ." if _len > 1990 else svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style')
 Repo = path.basename(path.abspath(_repos))
 Log = svnl('log')
 Urls = ''
