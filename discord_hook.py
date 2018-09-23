@@ -112,6 +112,12 @@ if _acls is not None and path.exists(_acls):
     except xml.ElementTree.ParserError:
         pass
 
+def iconurl(repo):
+    return {
+    #    'srvaddons': '',
+    #    'QBox': '',
+    }.get(repo, 'https://cdn.discordapp.com/avatars/314512567748001793/c5725b2d79c9081dae9d842ccb3d6dff.png')
+
 d = {
     'username': author,
     'avatar_url': avatar if avatar else 'https://metastruct.net/static/DefaultSteamAvatar.png',
@@ -122,7 +128,7 @@ d = {
             ],
             'footer': {
                 'text': repo + ' (rev. ' + _rev + ')',
-                'icon_url': 'https://cdn.discordapp.com/avatars/314512567748001793/c5725b2d79c9081dae9d842ccb3d6dff.png'
+                'icon_url': iconurl(repo)
             },
             #2010-02-15 20:10:20 +0000 (Mon, 15 Feb 2010)
             'timestamp': parser.parse(date),
