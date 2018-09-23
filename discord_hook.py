@@ -81,16 +81,16 @@ for line in _changed.split('\n'):
     elif line[0][0] == 'U':
         U()
 
-Author = svnl('author')
+author = svnl('author')
 avatar = None
-Date = re.sub('(\s\(.+\))', '', svnl('date'))
-_len = len(svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style'))
-Diff = svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style')[:1990] + "\n. . ." if _len > 1990 else svnl('diff', '--no-diff-deleted', '-x -w --ignore-eol-style')
-Repo = path.basename(path.abspath(_repos))
-Log = svnl('log')
-Urls = ''
+date = re.sub('(\s\(.+\))', '', svnl('date'))
+raw_diff = svnl('diff', '--diff-copy-from' , '--no-diff-deleted', '--no-diff-added', '-x -w -u --ignore-eol-style')
+diff = raw_diff[:1990] + "\n. . ." if len(raw_diff) > 1990 else raw_diff
+repo = path.basename(path.abspath(_repos))
+log = svnl('log')
+urls = ''
 for f in _changed.split('\n'):
-    Urls += f + '\n'
+    urls += f + '\n'
 
 # steamid thing
 if _acls is not None and path.exists(_acls):
@@ -98,7 +98,7 @@ if _acls is not None and path.exists(_acls):
 
     with open(path.abspath(_acls)) as fp:
         for line in fp:
-            if Author in line:
+            if author in line:
                 steam_id = line[:line.find(',')]
 
 
@@ -113,27 +113,27 @@ if _acls is not None and path.exists(_acls):
         pass
 
 d = {
-    'username': Author,
+    'username': author,
     'avatar_url': avatar if avatar else 'https://metastruct.net/static/DefaultSteamAvatar.png',
-    'content': Log,
+    'content': log,
     'embeds': [
         {
             'fields': [
             ],
             'footer': {
-                'text': Repo + ' (rev. ' + _rev + ')',
+                'text': repo + ' (rev. ' + _rev + ')',
                 'icon_url': 'https://cdn.discordapp.com/avatars/314512567748001793/c5725b2d79c9081dae9d842ccb3d6dff.png'
             },
             #2010-02-15 20:10:20 +0000 (Mon, 15 Feb 2010)
-            'timestamp': parser.parse(Date),
+            'timestamp': parser.parse(date),
             'color': rgb_to_int(color[0], color[1], color[2])
         }
     ]
 }
-if Diff:
-    d['embeds'][0]['description'] = '```diff\n' + Diff + '```'
+if diff:
+    d['embeds'][0]['description'] = '```diff\n' + diff + '```'
 
-shit = [tuple(Urls.split('\n')[i:i+10]) for i in range(0, len(Urls), 25)]
+shit = [tuple(urls.split('\n')[i:i+10]) for i in range(0, len(urls), 25)]
 
 for x in shit:
     if x: # because shit can be empty
